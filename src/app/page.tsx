@@ -1,28 +1,21 @@
-import { db } from '@/lib/db'
-import { user } from '@/lib/db/schema'
+import { db } from "@/lib/db";
 
 // oh yeah, this is the future
-export const runtime = 'edge'
+export const runtime = "edge";
 
 export default async function Home() {
-  const users = await db.select().from(user)
-
-  const createUser = async () => {
-    'use server'
-
-    await db.insert(user).values({ fullName: 'John Doe' })
-  }
+  const flocks = await db.query.flock.findMany({
+    with: {
+      breeds: true,
+    },
+  });
 
   return (
     <>
-      <p>my users:</p>
-      {users.map((user) => (
-        <div key={user.id}>{user.fullName}</div>
+      <p>Flocks:</p>
+      {flocks.map((flock) => (
+        <div key={flock.id}>{flock.name}</div>
       ))}
-
-      <form action={createUser}>
-        <button>create user</button>
-      </form>
     </>
-  )
+  );
 }
